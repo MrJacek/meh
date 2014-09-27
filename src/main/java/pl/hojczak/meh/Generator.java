@@ -42,10 +42,6 @@ public class Generator {
         return x;
     }
 
-    /**
-     * generowanie liczb pseudolosowych generator LCG www.algorytm.org (c) 2008
-     * Tomasz Lubinski
-     */
     public static void main(String[] args) {
         int i, n;
         long low, high;
