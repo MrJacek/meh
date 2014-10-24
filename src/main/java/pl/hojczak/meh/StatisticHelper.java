@@ -5,15 +5,11 @@
  */
 package pl.hojczak.meh;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author jhojczak
  */
 public class StatisticHelper {
-    private static final Logger LOG = Logger.getLogger(StatisticHelper.class.getName());
     
     public static double odchylenieStandardowe(double[] table, double srednia){
         double result=0d;

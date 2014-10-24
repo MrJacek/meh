@@ -5,6 +5,7 @@
  */
 package pl.hojczak.meh;
 
+import java.io.IOException;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
@@ -24,5 +25,8 @@ public class OdchylenieComputeTest {
         assertEquals(result, 1.5d);
 
     }
-
+    @Test
+    public void end2endLaunchGaussianGen() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException{
+        Excecutor.main(new String[]{"/home/jhojczak/development/szkola/meh/src/main/resources/meh.properties"});
+    }
 }

@@ -13,11 +13,11 @@ import java.util.List;
  *
  * @author hojczak
  */
-public class Generator {
+public class GeneratorLiniowy {
 
  
     public static void main(String[] args) {
-        Generator gen = new Generator(Integer.parseInt(args[0]),
+        GeneratorLiniowy gen = new GeneratorLiniowy(Integer.parseInt(args[0]),
                 Long.parseLong(args[1]));
         int maxIteration = Integer.parseInt(args[2]);
         List<Long> iteration = new ArrayList<>(maxIteration);
@@ -51,7 +51,7 @@ public class Generator {
     private long m;
     private int index;
 
-    public Generator(int paramK, long paramM) {
+    public GeneratorLiniowy(int paramK, long paramM) {
         long seed = new Date().getTime();
         System.out.println("seed: "+seed);
         System.out.println("k: "+paramK);
