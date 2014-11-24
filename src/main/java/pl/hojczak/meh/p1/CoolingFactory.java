@@ -21,16 +21,16 @@ public class CoolingFactory {
         switch (schemat.toLowerCase()) {
             case "geometryczny":
                 double alpha = Double.parseDouble(prop.getProperty("cooling.alpha"));
-                double start = Double.parseDouble(prop.getProperty("cooling.start"));
+                double start = Double.parseDouble(prop.getProperty("temperature.start"));
                 return new Geometryczny(start, alpha);
             case "liniowy":
                 alpha = Double.parseDouble(prop.getProperty("cooling.alpha"));
-                start = Double.parseDouble(prop.getProperty("cooling.start"));
+                start = Double.parseDouble(prop.getProperty("temperature.start"));
                 return new Liniowy(start, alpha);
             case "wykładniczy":
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             case "logarytminczny":
-                start = Double.parseDouble(prop.getProperty("cooling.start"));
+                start = Double.parseDouble(prop.getProperty("temperature.start"));
                 return new Logarytminczny(start);
             default:
                 throw new IllegalArgumentException("Nie prawidłowy schemat chłodzenia");

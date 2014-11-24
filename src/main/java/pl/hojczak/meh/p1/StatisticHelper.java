@@ -6,6 +6,7 @@
 package pl.hojczak.meh.p1;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,22 +28,22 @@ public class StatisticHelper {
         return tmp;
     }
 
-    public static double odchylenieStandardowe(double[] table, double srednia) {
+    public static double standardVariation(List<Solution> table, double srednia) {
         double result = 0d;
-        for (double index : table) {
-            result += Math.pow(index - srednia, 2);
+        for (Solution s : table) {
+            result += Math.pow(s.getFunValue() - srednia, 2);
         }
-        result = result / table.length;
+        result = result / table.size();
 
         return Math.sqrt(result);
     }
 
-    public static double wartośćOczekiwana(double[] table) {
+    public static double average(List<Solution> table) {
         double result = 0;
-        for (double i : table) {
-            result += i;
+        for (Solution s : table) {
+            result += s.getFunValue();
         }
-        result /= table.length;
+        result /= table.size();
         return result;
     }
 

@@ -14,13 +14,13 @@ import java.util.Random;
  */
 public class Solution {
 
-    public static Solution generate(int wymiary, double mutationsRange) {
+    public static Solution generate(int wymiary, double mutationsRange, Random generator) {
         double[] genotyp = new double[wymiary];
 
         for (int i = 0; i < wymiary; i++) {
             genotyp[i] = makeCoordinate(new Random(new Date().getTime()));
         }
-        return new Solution(genotyp, mutationsRange);
+        return new Solution(genotyp, mutationsRange, generator);
     }
 
     public static double makeCoordinate(Random random) {
@@ -34,14 +34,15 @@ public class Solution {
         return tmp;
     }
 
-    private final Random r = new Random(new Date().getTime());
+    private final Random generator;
     final double[] genotyp;
     final double mutationsRange;
     Double value = null;
 
-    public Solution(double[] genotyp, double mutationsRange) {
+    public Solution(double[] genotyp, double mutationsRange, Random generator) {
         this.genotyp = genotyp;
         this.mutationsRange = mutationsRange;
+        this.generator = generator;
     }
 
     public int getDimension() {
@@ -53,14 +54,13 @@ public class Solution {
             return value;
         }
 
-        double sum = 0;
+        double sumaKwadratów = 0;
         for (int i = 0; i < genotyp.length; i++) {
-            sum += genotyp[i];
+            sumaKwadratów += Math.pow(genotyp[i], 2);
         }
-        double kwadratSumy = Math.pow(sum, 2);
 
-        double r1 = Math.pow(kwadratSumy, 0.25d);
-        double r2 = Math.pow(kwadratSumy, 0.1d);
+        double r1 = Math.pow(sumaKwadratów, 0.25d);
+        double r2 = Math.pow(sumaKwadratów, 0.1d);
         r2 = Math.pow(Math.sin(50 * r2), 2) + 1;
         value = r1 * r2;
         return value;
@@ -73,7 +73,7 @@ public class Solution {
     public Solution mutates() {
         double[] result = genotyp.clone();
         for (int i = 0; i < genotyp.length; i++) {
-            result[i] = genotyp[i] + r.nextGaussian() * mutationsRange;
+            result[i] = genotyp[i] + generator.nextGaussian() * mutationsRange;
             if (result[i] >= 100d) {
                 result[i] = 99.999999999d;
             }
@@ -82,11 +82,11 @@ public class Solution {
             }
         }
 
-        return new Solution(result, mutationsRange);
+        return new Solution(result, mutationsRange, new Random(generator.nextLong()));
     }
 
     public Solution copy() {
-        return new Solution(genotyp.clone(), mutationsRange);
+        return new Solution(genotyp.clone(), mutationsRange, new Random(generator.nextLong()));
     }
 
     @Override

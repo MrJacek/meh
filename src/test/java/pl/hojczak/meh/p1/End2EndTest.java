@@ -21,7 +21,7 @@ public class End2EndTest {
 
         prop.load(End2EndTest.class.getResourceAsStream("/p1.properties"));
         Controller con = new Controller(prop);
-        con.compute();
+        con.simulate();
         con.saveData();
 
     }

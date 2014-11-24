@@ -5,6 +5,7 @@
  */
 package pl.hojczak.meh.p1;
 
+import java.util.Random;
 import static org.testng.Assert.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,7 +20,7 @@ public class OsobnikTest {
 
     @BeforeMethod
     public void init() {
-        osobnik = Solution.generate(2, 1);
+        osobnik = Solution.generate(2, 1,new Random());
     }
 
     @Test
@@ -42,7 +43,7 @@ public class OsobnikTest {
     public void shouldReturnFunValue() {
 
         double[] c = {0, 0};
-        osobnik = new Solution(c, 1);
+        osobnik = new Solution(c, 1,new Random());
         double result = osobnik.getFunValue();
         assertEquals(result, 0.0);
 
