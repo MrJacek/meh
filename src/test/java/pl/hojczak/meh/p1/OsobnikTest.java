@@ -20,7 +20,7 @@ public class OsobnikTest {
 
     @BeforeMethod
     public void init() {
-        osobnik = Solution.generate(2, 1,new Random());
+        osobnik = Solution.generate(2, 1, new Random());
     }
 
     @Test
@@ -43,7 +43,7 @@ public class OsobnikTest {
     public void shouldReturnFunValue() {
 
         double[] c = {0, 0};
-        osobnik = new Solution(c, 1,new Random());
+        osobnik = new Solution(c, 1);
         double result = osobnik.getFunValue();
         assertEquals(result, 0.0);
 

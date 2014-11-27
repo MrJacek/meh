@@ -9,7 +9,7 @@ package pl.hojczak.meh.p1;
 import java.util.Properties;
 
 /**
- * Wyważania
+ * 
  *
  * @author jhojczak
  */

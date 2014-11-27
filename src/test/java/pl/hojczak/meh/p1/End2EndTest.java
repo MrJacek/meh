@@ -20,8 +20,8 @@ public class End2EndTest {
         Properties prop = new Properties();
 
         prop.load(End2EndTest.class.getResourceAsStream("/p1.properties"));
-        Controller con = new Controller(prop);
-        con.simulate();
+        Algorithm con = new Algorithm(prop);
+        con.compute();
         con.saveData();
 
     }
