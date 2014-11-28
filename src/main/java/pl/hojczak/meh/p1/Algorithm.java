@@ -12,13 +12,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import pl.hojczak.meh.p1.CoolingFactory.Cooling;
+import pl.hojczak.meh.p1.CoolingFactory.Name;
 
 /**
  *
@@ -26,22 +26,22 @@ import pl.hojczak.meh.p1.CoolingFactory.Cooling;
  */
 public class Algorithm {
 
-    int max;
-    double boltzmannsConstant;
-    double temperatur;
-    int simulationCount;
-    double temperaturEnde;
-    Properties properties;
-
+    final int max;
+    final int simulationCount;
+    final double temperaturBegin;
+    final double temperaturEnde;
+    final double boltzmannsConstant;
+    final private int maxIteration;
     int dimensions;
-    double mutationsRange;
+    final double mutationsRange;
+    double temperatur;
+    Properties properties;
     String resultFile;
-    private final double temperaturBegin;
     Random generator = new Random(new Date().getTime());
-    List<Solution> bestCollection = new ArrayList<>();
+    List<SolutionsDual> extreamsCollection = new ArrayList<>();
     List<Solution> worstCollection = new ArrayList<>();
     List<Double> temps = new ArrayList<>();
-    List<Solution> middleSolution = new ArrayList<>();
+    List<SolutionsDual> middleSolution = new ArrayList<>();
     Map<Double, List<Solution>> fullResults = new LinkedHashMap<>();
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -49,86 +49,110 @@ public class Algorithm {
         prop.load(new FileInputStream(args[0]));
         Algorithm cont = new Algorithm(prop);
         cont.compute();
-        cont.saveData();
-
     }
+    private final int dimensionsEnd;
 
     public Algorithm(Properties prop) {
         properties = prop;
         max = Integer.parseInt(prop.getProperty("max.iteration.per.temperature"));
         dimensions = Integer.parseInt(prop.getProperty("dimensions"));
+        dimensionsEnd = Integer.parseInt(prop.getProperty("dimensions.end"));
         mutationsRange = Double.parseDouble(prop.getProperty("mutations.range"));
         resultFile = prop.getProperty("result.file");
         temperaturBegin = Double.parseDouble(prop.getProperty("temperature.start"));
         boltzmannsConstant = Double.parseDouble(prop.getProperty("k"));
         simulationCount = Integer.parseInt(prop.getProperty("simulation.count"));
+        maxIteration = Integer.parseInt(prop.getProperty("max.iteration"));
         temperaturEnde = Double.parseDouble(prop.getProperty("temperature.end"));
+    }
 
+    public void init() {
+        generator = new Random(new Date().getTime());
+        extreamsCollection = new ArrayList<>();
+        worstCollection = new ArrayList<>();
+        temps = new ArrayList<>();
+        middleSolution = new ArrayList<>();
+        fullResults = new LinkedHashMap<>();
     }
 
     public void compute() throws IOException {
+        do{
+            System.out.println("For dimensions="+dimensions);
+            System.out.println("Start simualtion");
+            if ("true".equals(properties.getProperty("cooling.all"))) {
 
-        System.out.println("Start simualtion");
+                for (Name coling : Name.values()) {
+                    for (int i = 0; i < simulationCount; i++) {
+                        SolutionsDual solution = simulate(CoolingFactory.create(coling, properties));
 
-        for (int i = 0; i < simulationCount; i++) {
-            Solution solution = simulate(CoolingFactory.create(properties));
-            System.out.println("First iteration: tmpsCount=" + fullResults.size());
-            save(new File(resultFile + "-middle-" + i + ".csv"), middleSolution, temps);
-            bestCollection.add(solution);
-        }
-        System.out.println("End simualtion");
-        System.out.println("Result was save in file:" + resultFile);
+                        extreamsCollection.add(solution);
+                    }
+                    saveData(resultFile + "-" + coling.name());
+                    System.out.println("Result was save in file:" + resultFile + "-" + coling.name());
+                    init();
+                }
+                System.out.println("End simualtion");
+            } else {
+
+                for (int i = 0; i < simulationCount; i++) {
+                    SolutionsDual solution = simulate(CoolingFactory.create(properties));
+                    extreamsCollection.add(solution);
+                }
+                saveData(resultFile + "-" + properties.getProperty("coling"));
+                System.out.println("End simualtion");
+                System.out.println("Result was save in file:" + resultFile + "-" + properties.getProperty("coling"));
+            }
+        }while(dimensions++ != dimensionsEnd);
 
     }
 
-    public Solution simulate(Cooling colling) {
+    public SolutionsDual simulate(Cooling colling) {
         temperatur = temperaturBegin;
         Solution best = Solution.generate(dimensions, mutationsRange, new Random(new Date().getTime()));
         Solution worst = best;
         Solution current = best.copy();
         middleSolution = new ArrayList<>();
         temps = new ArrayList<>();
-
+        int indexN = 0;
         do {
-            int index = 0;
+            int perTempIndex = 0;
             putSolution(temperatur, current);
-            middleSolution.add(current);
+
             temps.add(temperatur);
             do {
                 Solution fresh = current.mutates(generator);
-     
+
                 if (fresh.getFunValue() < current.getFunValue()) {
                     current = fresh.copy();
 
-                    best = getBestSolution(current, best);
-                    worst = getWorstSolution(current, worst);
+                    if (current.getFunValue() < best.getFunValue()) {
+                        best = current.copy();
+                    }
+                    if (current.getFunValue() > worst.getFunValue()) {
+                        worst = current.copy();
+                    }
                 } else {
                     if (acceptWorseSolution(current.getFunValue(), fresh.getFunValue())) {
                         current = fresh.copy();
 
-                        best = getBestSolution(current, best);
-                        worst = getWorstSolution(current, worst);
+                        if (current.getFunValue() < best.getFunValue()) {
+                            best = current.copy();
+                        }
+                        if (current.getFunValue() > worst.getFunValue()) {
+                            worst = current.copy();
+                        }
                     }
                 }
-                index = index + 1;
-            } while (index < max);
+                perTempIndex++;
+            } while (perTempIndex < max);
             temperatur = colling.next();
-        } while (temperatur > temperaturEnde);
-        return best;
-    }
+            indexN++;
+        } while (indexN < maxIteration && temperatur > temperaturEnde);
+        SolutionsDual result = new SolutionsDual();
+        result.best = best;
+        result.worst = worst;
 
-    private Solution getWorstSolution(Solution current, Solution worst) {
-        if (current.getFunValue() > worst.getFunValue()) {
-            worst = current.copy();
-        }
-        return worst;
-    }
-
-    private Solution getBestSolution(Solution current, Solution best) {
-        if (current.getFunValue() < best.getFunValue()) {
-            best = current.copy();
-        }
-        return best;
+        return result;
     }
 
     private boolean acceptWorseSolution(double worseSolution, double betterSolution) {
@@ -156,9 +180,16 @@ public class Algorithm {
 
     }
 
-    public void saveData() throws IOException {
-        save(new File(resultFile + "-best.csv"), bestCollection);
-        saveFull(new File(resultFile + ".csv"));
+    public static class SolutionsDual {
+
+        public Solution best;
+        public Solution worst;
+    }
+
+    public void saveData(String filename) throws IOException {
+
+        save(new File(filename + "-best.csv"), extreamsCollection);
+        saveFull(new File(filename + ".csv"));
     }
 
     public void saveFull(File file) throws IOException {
@@ -166,7 +197,6 @@ public class Algorithm {
             writer.append("id;");
             writer.append("temp;mean;\n");
             int id = 0;
-            System.out.println("Size full statistic:" + fullResults.entrySet().size());
             for (Map.Entry<Double, List<Solution>> entrySet : fullResults.entrySet()) {
 
                 Double temp = entrySet.getKey();
@@ -179,19 +209,25 @@ public class Algorithm {
         }
     }
 
-    public void save(File file, List<Solution> collection, List<Double>... others) throws IOException {
+    public void save(File file, List<SolutionsDual> collection, List<Double>... others) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
             writer.append("id;");
             for (int i = 0; i < dimensions; i++) {
-                writer.append("x" + (i + 1) + ";");
+                writer.append("best-x" + (i + 1) + ";");
             }
-            writer.append("value;mean;standardVariation\n");
-            double average = StatisticHelper.average(collection);
-            double standardVariation = StatisticHelper.standardVariation(collection, average);
-
+            writer.append("best-value;");
+            for (int i = 0; i < dimensions; i++) {
+                writer.append("worst-x" + (i + 1) + ";");
+            }
+            writer.append("worst-value;meanBest;standardVariationBest;meanWorst;standardVariationWorst\n");
+            double averageBest = StatisticHelper.averageBest(collection);
+            double standardVariationBest = StatisticHelper.standardVariationBest(collection, averageBest);
+            double averageWorst = StatisticHelper.averageWorst(collection);
+            double standardVariationWorst = StatisticHelper.standardVariationworst(collection, averageWorst);
+            System.out.println(String.format("Best average:|%.3f| Worst average:|%.3f|", averageBest, averageWorst));
             for (int i = 0; i < collection.size(); i++) {
-
-                writer.append(i + ";" + collection.get(i).toString() + String.format("%.3f;%.3f", average, standardVariation));
+                SolutionsDual sol = collection.get(i);
+                writer.append(i + ";" + sol.best.toString() + sol.worst.toString() + String.format("%.3f;%.3f;%.3f;%.3f", averageBest, standardVariationBest, averageWorst, standardVariationWorst));
                 if (others.length > 0) {
                     for (List<Double> o : others) {
                         writer.append(String.format(";%.3f", o.get(i)));

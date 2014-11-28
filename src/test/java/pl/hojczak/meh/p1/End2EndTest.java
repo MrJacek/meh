@@ -22,7 +22,6 @@ public class End2EndTest {
         prop.load(End2EndTest.class.getResourceAsStream("/p1.properties"));
         Algorithm con = new Algorithm(prop);
         con.compute();
-        con.saveData();
 
     }
 }

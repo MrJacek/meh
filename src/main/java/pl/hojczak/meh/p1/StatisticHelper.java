@@ -8,6 +8,7 @@ package pl.hojczak.meh.p1;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import pl.hojczak.meh.p1.Algorithm.SolutionsDual;
 
 /**
  *
@@ -38,10 +39,48 @@ public class StatisticHelper {
         return Math.sqrt(result);
     }
 
+    public static double standardVariationBest(List<SolutionsDual> table, double srednia) {
+        double result = 0d;
+        for (SolutionsDual s : table) {
+            result += Math.pow(s.best.getFunValue() - srednia, 2);
+        }
+        result = result / table.size();
+
+        return Math.sqrt(result);
+    }
+
+    public static double standardVariationworst(List<SolutionsDual> table, double srednia) {
+        double result = 0d;
+        for (SolutionsDual s : table) {
+            result += Math.pow(s.worst.getFunValue() - srednia, 2);
+        }
+        result = result / table.size();
+
+        return Math.sqrt(result);
+    }
+
     public static double average(List<Solution> table) {
         double result = 0;
         for (Solution s : table) {
             result += s.getFunValue();
+        }
+        result /= table.size();
+        return result;
+    }
+
+    public static double averageWorst(List<SolutionsDual> table) {
+        double result = 0;
+        for (SolutionsDual s : table) {
+            result += s.worst.getFunValue();
+        }
+        result /= table.size();
+        return result;
+    }
+
+    public static double averageBest(List<SolutionsDual> table) {
+        double result = 0;
+        for (SolutionsDual s : table) {
+            result += s.best.getFunValue();
         }
         result /= table.size();
         return result;
