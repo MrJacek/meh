@@ -29,9 +29,9 @@ public class Algorithm {
             throw new IllegalArgumentException("prop can't be null");
         }
         this.prop = prop;
-        genotypeSize = helper.getIntegerProp("genotype.size", prop);
         startPopulationSize = helper.getIntegerProp("population.start.size", prop);
         problem = Problem.createProblemFromFile(prop.getProperty("problem.graph.file", ""));
+        genotypeSize = problem.getSize();
 
     }
 

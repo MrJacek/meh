@@ -22,13 +22,45 @@ public class TSPLIBParserTest {
     @Test
     public void shouldParserReadAllFile() {
         TSPLIBParser parser = new TSPLIBParser();
-
+        double[][] graph = null;
         try {
-            parser.loadGraphFromFile(TSPLIBParserTest.class.getResource("a280.xml").getFile());
+            graph = parser.loadGraphFromFile(TSPLIBParserTest.class.getResource("att48.xml").getFile());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(TSPLIBParserTest.class.getName()).log(Level.SEVERE, null, ex);
             Assert.fail(ex.getMessage());
+        }
+        Assert.assertNotNull(graph);
+        for (int i = 0; i < graph.length; i++) {
+            for (int j = 0; j < graph.length; j++) {
+                if (i == j) {
+                    Assert.assertEquals(0.0d, graph[i][j]);
+                } else {
+                    Assert.assertTrue("Distance can't be less then zero. Find between vertex [" + i + "]<->[" + j + "]", graph[i][j] > 0);
+                }
+            }
+        }
+    }
 
+    private void printGraph(double[][] graph) {
+        System.out.print("    ");
+        for (int i = 0; i < graph.length; i++) {
+            System.out.printf(" %06d ", i);
+        }
+        System.out.print("\n----");
+        for (int i = 0; i < graph.length; i++) {
+            System.out.print("--------");
+        }
+        System.out.print("\n");
+
+        for (int i = 0; i < graph.length; i++) {
+            System.out.printf("%3d|", i);
+            System.out.print(" ");
+            for (int j = 0; j < graph.length; j++) {
+
+                System.out.printf("%02.3f  ", graph[i][j]);
+
+            }
+            System.out.print("\n");
         }
     }
 }

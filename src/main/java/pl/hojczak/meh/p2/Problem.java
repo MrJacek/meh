@@ -21,18 +21,17 @@ import org.xml.sax.SAXNotSupportedException;
 public class Problem {
 
     private final Helper helper = new Helper();
-    private int size = 200;
+    private double[][] graph;
 
     public Problem(double[][] graph) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (graph == null) {
+            throw new IllegalArgumentException("graph can't be null");
+        }
+        this.graph = graph;
     }
 
     public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
+        return graph.length;
     }
 
     public int getDistance(int genotype, int genotype0) {

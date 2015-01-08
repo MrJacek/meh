@@ -23,7 +23,7 @@ public class AlgorithmTest {
     @Before
     public void initAlgorithmObject() throws FileNotFoundException {
         Properties prop = new Properties();
-        prop.setProperty("problem.graph.file", AlgorithmTest.class.getResource("a280.xml").getFile());
+        prop.setProperty("problem.graph.file", AlgorithmTest.class.getResource("att48.xml").getFile());
         algorithm = new Algorithm(prop);
     }
 
@@ -46,7 +46,7 @@ public class AlgorithmTest {
         algorithm.compute();
         List<Individual> population = algorithm.getCurrentPopulation();
         Assert.assertNotNull(population);
-        Assert.assertEquals(150, population.size());
+        Assert.assertEquals(200, population.size());
     }
 
     @Test
