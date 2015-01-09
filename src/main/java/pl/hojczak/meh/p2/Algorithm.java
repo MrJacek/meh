@@ -5,7 +5,6 @@
  */
 package pl.hojczak.meh.p2;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +36,7 @@ public class Algorithm {
 
     public void compute() {
         createStartPopulation();
+        
     }
 
     public List<Individual> getCurrentPopulation() {

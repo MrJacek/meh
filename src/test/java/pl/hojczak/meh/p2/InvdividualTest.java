@@ -19,7 +19,7 @@ public class InvdividualTest {
 
     @Before
     public void init() {
-        p = new Problem(new double[200][200]);
+        p = new Problem(new double[48][48]);
     }
 
     @Test
@@ -28,7 +28,7 @@ public class InvdividualTest {
         Individual in = new Individual(p);
         int[] genotype = in.getGenotype();
         Assert.assertNotNull(genotype);
-        Assert.assertTrue(genotype.length >= 200);
+        Assert.assertTrue(genotype.length >= 48);
     }
 
     @Test
@@ -36,10 +36,44 @@ public class InvdividualTest {
         Individual in = new Individual(p);
         int[] genotype = in.getGenotype();
         Assert.assertNotNull(genotype);
-        Assert.assertTrue(genotype.length >= 200);
-        for (int i = 0; i < 200; i++) {
+        Assert.assertTrue(genotype.length >= 48);
+        for (int i = 0; i < 48; i++) {
             Assert.assertNotNull(genotype[i]);
         }
 
+    }
+
+    @Test
+    public void shouldCreateInvdividualWithRandomGens() {
+        Individual in = new Individual(p);
+        int[] genotype = in.getGenotype();
+        Assert.assertNotNull(genotype);
+        Assert.assertTrue(genotype.length >= 48);
+        for (int i = 0; i < 48; i++) {
+            Assert.assertTrue("Gens should have values from vertex numbers", genotype[i] < 48);
+            Assert.assertTrue("Gens should have values from vertex numbers", genotype[i] >= 0);
+        }
+    }
+
+    @Test
+    public void shouldCreateInvdividualWithCorrectGenotype() {
+        Individual in = new Individual(p);
+        int[] genotype = in.getGenotype();
+        Assert.assertNotNull(genotype);
+        Assert.assertTrue(genotype.length >= 48);
+        checkGeanotype(genotype);
+    }
+
+    private boolean checkGeanotype(int[] genotype) {
+        boolean[] tmp = new boolean[genotype.length];
+        for (boolean u : tmp) {
+            u = true;
+        }
+
+        for (int i = 0; i < genotype.length; i++) {
+            Assert.assertTrue("Gen with value: [" + genotype[i] + "] was duplicated.", tmp[genotype[i]]);
+            tmp[genotype[i]] = false;
+        }
+        return true;
     }
 }

@@ -20,7 +20,6 @@ import org.xml.sax.SAXNotSupportedException;
  */
 public class Problem {
 
-    private final Helper helper = new Helper();
     private double[][] graph;
 
     public Problem(double[][] graph) {
@@ -34,8 +33,11 @@ public class Problem {
         return graph.length;
     }
 
-    public int getDistance(int genotype, int genotype0) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public double getDistance(int from, int to) {
+        if (graph[from][to] <= 0) {
+            throw new IllegalArgumentException("This connetion [" + from + "]=>[" + to + "] don't exist");
+        }
+        return graph[from][to];
     }
 
     public void loadProblemFromProperties(Properties prop) {

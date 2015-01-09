@@ -5,6 +5,10 @@
  */
 package pl.hojczak.meh.p2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author jhojczak
@@ -12,7 +16,11 @@ package pl.hojczak.meh.p2;
 public class Individual {
 
     int[] genotype;
+    // arrayUsedToDetectingGenDuplicationInGenotype
+    boolean[] tmp;
+    double evaluation = 0;
     Problem problem;
+    Helper helper = new Helper();
 
     public Individual(Problem problem) {
         if (problem == null) {
@@ -20,19 +28,54 @@ public class Individual {
         }
         this.problem = problem;
         genotype = new int[problem.getSize()];
+        createRanomGenotype();
     }
 
     int[] getGenotype() {
         return genotype;
     }
 
-    int getEvaluation() {
-        int result = 0;
+    double getEvaluation() {
+
+        if (evaluation != 0) {
+            return evaluation;
+        }
+
+        evaluation = 0;
         for (int i = 0; i < genotype.length; i++) {
             int next = i + 1 % genotype.length;
-            result = problem.getDistance(genotype[i], genotype[next]);
+            evaluation += problem.getDistance(genotype[i], genotype[next]);
+        }
+
+        return evaluation;
+    }
+
+    private void createRanomGenotype() {
+        for (int i = 0; i < genotype.length; i++) {
+            genotype[i] = Helper.getRandom().nextInt(48);
+        }
+    }
+
+    private boolean checkGeanotype(int[] genotype) {
+        Arrays.fill(tmp, true);
+        for (int i = 0; i < genotype.length; i++) {
+            if (tmp[genotype[i]]) {
+                tmp[genotype[i]] = false;
+            } else {
+                List<Integer> freeGens=getFreeGens(tmp);
+                Helper.getRandom().nextInt(freeGens.size());
+            }
+        }
+        return true;
+    }
+
+    private List<Integer> getFreeGens(boolean[] tmp) {
+        List<Integer> result = new ArrayList<>(tmp.length / 2);
+        for (int i = 0; i < tmp.length; i++) {
+            if (tmp[i]) {
+                result.add(i);
+            }
         }
         return result;
     }
-
 }

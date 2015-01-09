@@ -55,7 +55,7 @@ public class AlgorithmTest {
         List<Individual> population = algorithm.getCurrentPopulation();
         Assert.assertNotNull(population);
         for (Individual indiv : population) {
-            int result = indiv.getEvaluation();
+            double result = indiv.getEvaluation();
             Assert.assertNotNull(result);
             Assert.assertNotEquals(0, result);
         }
