@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pl.hojczak.meh.p1.Algorithm</mainClass>
+                            <mainClass>pl.hojczak.meh.p2.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

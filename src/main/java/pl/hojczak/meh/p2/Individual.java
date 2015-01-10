@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author jhojczak
  */
-public class Individual {
+public class Individual implements Comparable<Individual> {
 
     int[] genotype;
     // arrayUsedToDetectingGenDuplicationInGenotype
@@ -22,12 +22,28 @@ public class Individual {
     Problem problem;
     Helper helper = new Helper();
 
+    public Individual() {
+
+    }
+
     public Individual(Problem problem) {
         if (problem == null) {
             throw new IllegalArgumentException("problem can't be null");
         }
         this.problem = problem;
         genotype = new int[problem.getSize()];
+        createRandomGenotype();
+    }
+
+    public Individual(Problem problem, int[] genotype) {
+        if (problem == null) {
+            throw new IllegalArgumentException("problem can't be null");
+        }
+        if (genotype == null) {
+            throw new IllegalArgumentException("genotype can't be null");
+        }
+        this.problem = problem;
+        this.genotype = genotype.clone();
     }
 
     int[] getGenotype() {
@@ -48,12 +64,38 @@ public class Individual {
         return evaluation;
     }
 
-    public void createRanomGenotype() {
+    public void createRandomGenotype() {
         for (int i = 0; i < genotype.length; i++) {
             genotype[i] = Helper.getRandom().nextInt(genotype.length);
         }
         removeDuplicationInGenotype(genotype, problem);
         removeNotExistingConnectiong(genotype, problem);
+    }
+
+    public void removeDuplicationInGenotype() {
+        removeDuplicationInGenotype(genotype, problem);
+    }
+
+    public void removeNotExistingConnectiong() {
+        removeNotExistingConnectiong(genotype, problem);
+    }
+
+    public void mutate() {
+        int c1 = Helper.getRandom().nextInt(genotype.length);
+        int c2 = Helper.getRandom().nextInt(genotype.length);
+        mutateInversion(genotype, c1, c2);
+    }
+
+    public void mutateInversion(int[] genotype, int c1, int c2) {
+        int a = c1 < c2 ? c1 : c2;
+        int b = c1 > c2 ? c1 : c2;
+        while (a < b) {
+            c1 = genotype[a];
+            genotype[a] = genotype[b];
+            genotype[b] = c1;
+            a++;
+            b--;
+        }
     }
 
     public void removeDuplicationInGenotype(int[] genotype, Problem p) {
@@ -64,8 +106,12 @@ public class Individual {
                 tmp[genotype[i]] = false;
             } else {
 
-                List<Integer> freeGens = getFreeGens(tmp, p, genotype[i - 1]);
-                int choosenGen = Helper.getRandom().nextInt(freeGens.size());
+                List<Integer> freeGens = getFreeGens(tmp, p);
+                int size = freeGens.size();
+                if (size == 0) {
+                    throw new IllegalArgumentException("Error during removing duplication genotype=" + Arrays.toString(genotype));
+                }
+                int choosenGen = Helper.getRandom().nextInt(size);
                 genotype[i] = freeGens.get(choosenGen);
                 if (!tmp[genotype[i]]) {
                     throw new IllegalStateException("Problem with generating free gens");
@@ -74,19 +120,6 @@ public class Individual {
             }
         }
 
-    }
-
-    private List<Integer> getFreeGens(boolean[] tmp, Problem p, int from) {
-
-        List<Integer> result = new ArrayList<>(tmp.length);
-        for (int i = 0; i < tmp.length; i++) {
-            if (tmp[i]) {
-                if (problem.isConnection(from, i)) {
-                    result.add(i);
-                }
-            }
-        }
-        return result;
     }
 
     void removeNotExistingConnectiong(int[] genotype, Problem p) {
@@ -105,5 +138,61 @@ public class Individual {
             }
         }
     }
+
+    private List<Integer> getFreeGens(boolean[] tmp, Problem p) {
+
+        List<Integer> result = new ArrayList<>(tmp.length);
+        for (int i = 0; i < tmp.length; i++) {
+            if (tmp[i]) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public int compareTo(Individual o) {
+        if (o == null) {
+            throw new NullPointerException("o can't be null");
+        }
+        if (this == o) {
+            return 0;
+        }
+        if (this.getEvaluation() > o.getEvaluation()) {
+            return 1;
+        } else if (this.getEvaluation() < o.getEvaluation()) {
+            return -1;
+        }
+        return 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Arrays.hashCode(this.genotype);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Individual other = (Individual) obj;
+        return Arrays.equals(this.genotype, other.genotype);
+    }
+
+    @Override
+    public String toString() {
+        return "Individual {" + "genotype=" + Arrays.toString(genotype) + ","+String.format("evaluation=%2.2f}",evaluation);
+    }
+    public String toCSV(){
+        return Arrays.toString(genotype).replaceAll(",", ";").replaceAll("\\[", "").replaceAll("]", "")+";"+String.format("%.2f}",evaluation);
+    }
+   
 
 }

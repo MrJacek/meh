@@ -7,6 +7,9 @@ package pl.hojczak.meh.p2;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -65,7 +68,17 @@ public class InvdividualTest {
 
         individual.removeDuplicationInGenotype(genotype, p);
         checkGensDuplication(genotype);
-        
+
+    }
+
+    @Test
+    public void shouldCreateInvdividualWithGenotypeWithoutDuplicationVertexBugReproduction() {
+
+        int[] genotype = new int[]{3, 0, 1, 3};
+
+        individual.removeDuplicationInGenotype(genotype, p);
+        checkGensDuplication(genotype);
+
     }
 
     private boolean checkGensDuplication(int[] genotype) {
@@ -80,9 +93,9 @@ public class InvdividualTest {
 
     @Test
     public void shouldCorrectGenotype() {
-        individual = new Individual(p);
         int[] genotype = new int[]{0, 1, 2, 3};
-        individual.removeNotExistingConnectiong(genotype,p);
+        individual = new Individual(p);
+        individual.removeNotExistingConnectiong(genotype, p);
 
         for (int i = 0; i < genotype.length; i++) {
             int from = i;
@@ -90,5 +103,33 @@ public class InvdividualTest {
             double distance = p.getDistance(genotype[from], genotype[to]);
             Assert.assertTrue("Genotype have not existing conneting [" + from + "]=>[" + to + "]", 0d < distance);
         }
+    }
+
+    @Test
+    public void shouldMuteByInversion() {
+
+        individual = new Individual(p);
+        int[] genotype = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
+        int c1 = 1;
+        int c2 = 4;
+        individual.mutateInversion(genotype, c1, c2);
+        Assert.assertArrayEquals(new int[]{0, 4, 3, 2, 1, 5, 6, 7}, genotype);
+    }
+
+    @Test
+    public void shouldBeSorted() {
+        List<Individual> sortet = new LinkedList<>();
+        for (int i = 0; i < 10; i++) {
+            Individual in = new Individual(p);
+            in.createRandomGenotype();
+            sortet.add(in);
+        }
+        Collections.sort(sortet);
+        int index=0;
+        for (Individual col : sortet) {
+            System.out.println(col+" order="+index);
+            index++;
+        }
+
     }
 }

@@ -28,6 +28,10 @@ public class Problem {
     public int getSize() {
         return graph.length;
     }
+    
+    public float getSizeAsDouble() {
+        return (float)graph.length;
+    }
 
     public double getDistance(int from, int to) {
 //        if (graph[from][to] <= 0d) {
