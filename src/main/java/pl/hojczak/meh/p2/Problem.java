@@ -6,13 +6,9 @@
 package pl.hojczak.meh.p2;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotSupportedException;
 
 /**
  *
@@ -34,9 +30,9 @@ public class Problem {
     }
 
     public double getDistance(int from, int to) {
-        if (graph[from][to] <= 0) {
-            throw new IllegalArgumentException("This connetion [" + from + "]=>[" + to + "] don't exist");
-        }
+//        if (graph[from][to] <= 0d) {
+//            throw new IllegalArgumentException("This connetion [" + from + "]=>[" + to + "] don't exist");
+//        }
         return graph[from][to];
     }
 
@@ -52,6 +48,10 @@ public class Problem {
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    boolean isConnection(int from, int to) {
+        return graph[from][to] > 0d;
     }
 
 }

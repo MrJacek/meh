@@ -36,7 +36,7 @@ public class Algorithm {
 
     public void compute() {
         createStartPopulation();
-        
+
     }
 
     public List<Individual> getCurrentPopulation() {
@@ -46,7 +46,9 @@ public class Algorithm {
     public void createStartPopulation() {
         population = new LinkedList<>();
         for (int i = 0; i < startPopulationSize; i++) {
-            population.add(new Individual(problem));
+            Individual in = new Individual(problem);
+            in.createRanomGenotype();
+            population.add(in);
         }
 
     }

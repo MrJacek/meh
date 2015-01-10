@@ -20,6 +20,6 @@ public class Main {
         Properties prop=new Properties();
         prop.load(new FileInputStream(argv[0]));
         Algorithm algorithm=new Algorithm(prop);
+        algorithm.compute();
     }
-
 }

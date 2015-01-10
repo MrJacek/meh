@@ -17,7 +17,7 @@ public class Individual {
 
     int[] genotype;
     // arrayUsedToDetectingGenDuplicationInGenotype
-    boolean[] tmp;
+
     double evaluation = 0;
     Problem problem;
     Helper helper = new Helper();
@@ -28,11 +28,10 @@ public class Individual {
         }
         this.problem = problem;
         genotype = new int[problem.getSize()];
-        createRanomGenotype();
     }
 
     int[] getGenotype() {
-        return genotype;
+        return genotype.clone();
     }
 
     double getEvaluation() {
@@ -41,41 +40,70 @@ public class Individual {
             return evaluation;
         }
 
-        evaluation = 0;
         for (int i = 0; i < genotype.length; i++) {
-            int next = i + 1 % genotype.length;
+            int next = (i + 1) % genotype.length;
             evaluation += problem.getDistance(genotype[i], genotype[next]);
         }
 
         return evaluation;
     }
 
-    private void createRanomGenotype() {
+    public void createRanomGenotype() {
         for (int i = 0; i < genotype.length; i++) {
-            genotype[i] = Helper.getRandom().nextInt(48);
+            genotype[i] = Helper.getRandom().nextInt(genotype.length);
         }
+        removeDuplicationInGenotype(genotype, problem);
+        removeNotExistingConnectiong(genotype, problem);
     }
 
-    private boolean checkGeanotype(int[] genotype) {
+    public void removeDuplicationInGenotype(int[] genotype, Problem p) {
+        boolean[] tmp = new boolean[genotype.length];
         Arrays.fill(tmp, true);
         for (int i = 0; i < genotype.length; i++) {
             if (tmp[genotype[i]]) {
                 tmp[genotype[i]] = false;
             } else {
-                List<Integer> freeGens=getFreeGens(tmp);
-                Helper.getRandom().nextInt(freeGens.size());
+
+                List<Integer> freeGens = getFreeGens(tmp, p, genotype[i - 1]);
+                int choosenGen = Helper.getRandom().nextInt(freeGens.size());
+                genotype[i] = freeGens.get(choosenGen);
+                if (!tmp[genotype[i]]) {
+                    throw new IllegalStateException("Problem with generating free gens");
+                }
+                tmp[genotype[i]] = false;
             }
         }
-        return true;
+
     }
 
-    private List<Integer> getFreeGens(boolean[] tmp) {
-        List<Integer> result = new ArrayList<>(tmp.length / 2);
+    private List<Integer> getFreeGens(boolean[] tmp, Problem p, int from) {
+
+        List<Integer> result = new ArrayList<>(tmp.length);
         for (int i = 0; i < tmp.length; i++) {
             if (tmp[i]) {
-                result.add(i);
+                if (problem.isConnection(from, i)) {
+                    result.add(i);
+                }
             }
         }
         return result;
     }
+
+    void removeNotExistingConnectiong(int[] genotype, Problem p) {
+
+        for (int i = 0; i < genotype.length; i++) {
+            int to = (i + 1) % genotype.length;
+            if (!problem.isConnection(i, to)) {
+                int other;
+                do {
+                    other = (to + 1) % genotype.length;
+                } while (!problem.isConnection(i, other)
+                        && problem.isConnection(other, to));
+                int tmp = genotype[to];
+                genotype[to] = genotype[other];
+                genotype[other] = tmp;
+            }
+        }
+    }
+
 }
