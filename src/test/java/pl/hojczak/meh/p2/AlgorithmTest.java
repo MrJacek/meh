@@ -6,6 +6,7 @@
 package pl.hojczak.meh.p2;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -23,7 +24,7 @@ public class AlgorithmTest {
     Problem p;
 
     @Before
-    public void initAlgorithmObject() throws FileNotFoundException {
+    public void initAlgorithmObject() throws FileNotFoundException, IOException {
         Properties prop = new Properties();
         p = Problem.createProblemFromFile(AlgorithmTest.class.getResource("att48.xml").getFile());
         algorithm = new Algorithm(prop, p);
@@ -39,7 +40,7 @@ public class AlgorithmTest {
     }
 
     @Test
-    public void computeShouldCreateStartPopulationWithGivenSize() {
+    public void computeShouldCreateStartPopulationWithGivenSize() throws IOException {
         Properties prop = new Properties();
         prop.setProperty("population.start.size", "200");
         algorithm = new Algorithm(prop, p);
@@ -62,7 +63,7 @@ public class AlgorithmTest {
     }
 
     @Test
-    public void shouldCorssoverUsingPmx() {
+    public void shouldCorssoverUsingPmx() throws IOException {
         double[][] graph = new double[][]{{0d, 3d, 4d, 3d, 1d}, {3d, 0d, 1d, 4d, 3d}, {5d, 1d, 0d, 9d, 1d}, {1d, 2d, 3d, 0d, 2d}, {1d, 2d, 3d, 1d, 0d}};
         Problem p = new Problem(graph);
         Properties prop = new Properties();
@@ -86,7 +87,7 @@ public class AlgorithmTest {
     }
 
     @Test
-    public void shouldComputeSimpleExample() {
+    public void shouldComputeSimpleExample() throws IOException {
         Properties prop = new Properties();
         p = Problem.createProblemFromFile(AlgorithmTest.class.getResource("att48.xml").getFile());
         prop.setProperty("population.start.size", "10");
@@ -94,5 +95,6 @@ public class AlgorithmTest {
         algorithm = new Algorithm(prop, p);
         algorithm.compute();
     }
-
+    
+    
 }

@@ -5,8 +5,12 @@
  */
 package pl.hojczak.meh.p2;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -24,39 +28,69 @@ public class Algorithm {
     final private int startPopulationSize;
     private Problem problem;
     final private int maxIteration;
+    final private String outputFile;
+    FileWriter writer;
 
     Individual best;
     Individual worst;
 
-    public Algorithm(Properties prop, Problem p) {
+    public Algorithm(Properties prop, Problem p) throws FileNotFoundException, IOException {
         if (prop == null) {
             throw new IllegalArgumentException("prop can't be null");
         }
         this.prop = prop;
         startPopulationSize = helper.getIntegerProp("population.start.size", prop);
         maxIteration = helper.getIntegerProp("max.iteration", prop);
+        outputFile = prop.getProperty("output.file", "output.csv");
         problem = p;
         genotypeSize = problem.getSize();
+        writer = new FileWriter(outputFile, false);
+
     }
 
-    public void compute() {
+    public Algorithm() {
+        this.genotypeSize = 0;
+        this.startPopulationSize = 0;
+        this.problem = null;
+        this.maxIteration = 0;
+        outputFile = "output.csv";
+    }
+
+    public void compute() throws IOException {
         createStartPopulation();
         best = new IndividualStart(Double.MIN_VALUE);
         worst = new IndividualStart(Double.MAX_VALUE);
         Collections.sort(population);
         best = population.get(0);
         worst = population.get(population.size() - 1);
-
+        Individual localBest = best;
+        Individual localWorst = worst;
         int index = 0;
+        System.out.println("Iteration:");
         while (index != maxIteration) {
+            System.out.print("\r"+index);
             List<Individual> T = reporoduction(population);
             List<Individual> O = intercroosing(T);
             mutation(O);
             Collections.sort(O);
+            Collections.sort(T);
+            writer.append(population.size()+";" + T.size() + ";" + O.size());
             population = succession(O, T);
-
+            Collections.sort(population);
+            localBest = population.get(0);
+            localWorst = population.get(population.size() - 1);
+            writer.append(";"+localBest.toCSV()+";"+localWorst.toCSV()+"\n");
+            if (localBest.getEvaluation() < best.getEvaluation()) {
+                best = localBest;
+            }
+            if (localWorst.getEvaluation() > worst.getEvaluation()) {
+                worst = localWorst;
+            }
+            
+            
             index++;
         }
+        System.out.println("\nFinish!");
     }
 
     public Individual getBest() {
@@ -102,17 +136,10 @@ public class Algorithm {
         return offspring;
     }
 
-    public Algorithm() {
-        this.genotypeSize = 0;
-        this.startPopulationSize = 0;
-        this.problem = null;
-        this.maxIteration = 0;
-    }
-
     private List<Individual> reporoduction(List<Individual> population) {
         List<Individual> result = new LinkedList<>();
         Collections.sort(population);
-        for (int i = 0; i < problem.getSize(); i++) {
+        for (int i = 0; i < population.size(); i++) {
             int choosen = Math.round((float) (Math.abs(Helper.getRandom().nextGaussian()) * (double) population.size())) % population.size();
             result.add(population.get(choosen));
         }
@@ -155,8 +182,37 @@ public class Algorithm {
         }
     }
 
-    private List<Individual> succession(List<Individual> O, List<Individual> T) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private List<Individual> succession(List<Individual> newGeneration, List<Individual> oldGeneration) {
+        List<Individual> result = new LinkedList<>();
+        int oldSize = oldGeneration.size();
+        int newSize = newGeneration.size();
+        int oldSizeGroupWhichGoToNextIteration = oldSize / 4;
+        int newSizeGroupWhichGoToNextIteration = (newSize / 4) * 3;
+        for (int i = 0; i < oldSizeGroupWhichGoToNextIteration; i++) {
+            double gaussian = Helper.getRandom().nextGaussian();
+            double tmp = Math.abs(gaussian) * (double) oldSize;
+            int index = (int) Math.round(tmp);
+            if (index >= oldSize) {
+                index = 0;
+
+            }
+            result.add(oldGeneration.get(index));
+        }
+        for (int i = 0; i < newSizeGroupWhichGoToNextIteration; i++) {
+            double gaussian = Helper.getRandom().nextGaussian();
+            double tmp = Math.abs(gaussian) * (double) newSize;
+            int index = (int) Math.round(tmp);
+            if (index >= newSize) {
+                index = 0;
+            }
+            result.add(newGeneration.get(index));
+        }
+        return result;
+    }
+
+    void finish() throws IOException {
+      writer.flush();
+      writer.close();
     }
 
 }

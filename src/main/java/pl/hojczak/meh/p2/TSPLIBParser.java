@@ -30,7 +30,7 @@ public class TSPLIBParser {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         parser = parserFactory.newSAXParser();
-        LOG.info("!!!Start parsing file: "+file+"!!!");
+     
         SizeCounter counter = new SizeCounter();
         FileInputStream fis = new FileInputStream(file);
         parser.parse(fis, counter);
@@ -38,7 +38,7 @@ public class TSPLIBParser {
         parser = parserFactory.newSAXParser();
         fis = new FileInputStream(file);
         parser.parse(fis, readHandler);
-        LOG.info("!!!File was parset: "+file+"!!!");
+
         return readHandler.getGraph();
     }
 
@@ -76,7 +76,7 @@ public class TSPLIBParser {
 
         @Override
         public void startDocument() throws SAXException {
-            LOG.info("Start dockument");
+         
         }
 
         @Override

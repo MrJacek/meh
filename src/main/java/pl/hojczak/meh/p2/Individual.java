@@ -191,7 +191,7 @@ public class Individual implements Comparable<Individual> {
         return "Individual {" + "genotype=" + Arrays.toString(genotype) + ","+String.format("evaluation=%2.2f}",evaluation);
     }
     public String toCSV(){
-        return Arrays.toString(genotype).replaceAll(",", ";").replaceAll("\\[", "").replaceAll("]", "")+";"+String.format("%.2f}",evaluation);
+        return String.format("%.2f",evaluation);//+Arrays.toString(genotype).replaceAll(",", ";").replaceAll("\\[", "").replaceAll("]", "");
     }
    
 
