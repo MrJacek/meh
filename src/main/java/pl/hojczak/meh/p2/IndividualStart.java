@@ -9,15 +9,15 @@ package pl.hojczak.meh.p2;
  *
  * @author jhojczak
  */
-public class IndividualStart extends Individual {
+public class IndividualStart extends IndividualImpl {
 
-    public IndividualStart(final double evaluation) {
+    public IndividualStart(final long evaluation) {
         super();
         this.evaluation = evaluation;
     }
 
     @Override
-    double getEvaluation() {
+    public long getEvaluation() {
         return evaluation;
     }
 

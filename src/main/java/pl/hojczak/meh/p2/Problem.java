@@ -16,9 +16,9 @@ import org.xml.sax.SAXException;
  */
 public class Problem {
 
-    private double[][] graph;
+    private long[][] graph;
 
-    public Problem(double[][] graph) {
+    public Problem(long[][] graph) {
         if (graph == null) {
             throw new IllegalArgumentException("graph can't be null");
         }
@@ -28,9 +28,9 @@ public class Problem {
     public int getSize() {
         return graph.length;
     }
-    
+
     public float getSizeAsDouble() {
-        return (float)graph.length;
+        return (float) graph.length;
     }
 
     public double getDistance(int from, int to) {
@@ -47,7 +47,7 @@ public class Problem {
     public static Problem createProblemFromFile(String file) {
         TSPLIBParser parser = new TSPLIBParser();
         try {
-            double[][] graph = parser.loadGraphFromFile(file);
+            long[][] graph = parser.loadGraphFromFile(file);
             return new Problem(graph);
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new IllegalStateException(ex);
@@ -55,7 +55,7 @@ public class Problem {
     }
 
     boolean isConnection(int from, int to) {
-        return graph[from][to] > 0d;
+        return graph[from][to] > 0l;
     }
 
 }

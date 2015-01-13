@@ -17,7 +17,7 @@ public class ProblemTest {
 
     @Test
     public void problemShouldLoadStateFromProperties() {
-        Problem problem = new Problem(new double[250][250]);
+        Problem problem = new Problem(new long[250][250]);
         Assert.assertEquals(250, problem.getSize());
     }
 }

@@ -26,11 +26,11 @@ public class TSPLIBParser {
     private static final Logger LOG = Logger.getLogger(TSPLIBParser.class.getName());
     SAXParser parser;
 
-    double[][] loadGraphFromFile(String file) throws ParserConfigurationException, SAXNotRecognizedException, SAXNotSupportedException, SAXException, IOException {
+    long[][] loadGraphFromFile(String file) throws ParserConfigurationException, SAXNotRecognizedException, SAXNotSupportedException, SAXException, IOException {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         parser = parserFactory.newSAXParser();
-     
+
         SizeCounter counter = new SizeCounter();
         FileInputStream fis = new FileInputStream(file);
         parser.parse(fis, counter);
@@ -61,28 +61,28 @@ public class TSPLIBParser {
 
     public static class TSPXMLHanlder extends DefaultHandler {
 
-        double[][] graph;
+        long[][] graph;
         int vertexFrom = 0;
-        double currentCost = -1d;
+        long currentCost = -1l;
         int vertexTo;
 
-        public double[][] getGraph() {
+        public long[][] getGraph() {
             return graph;
         }
 
         public TSPXMLHanlder(int size) {
-            graph = new double[size][size];
+            graph = new long[size][size];
         }
 
         @Override
         public void startDocument() throws SAXException {
-         
+
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             if ("edge".equals(qName)) {
-                currentCost = Double.parseDouble(attributes.getValue("cost"));
+                currentCost = Math.round(Double.parseDouble(attributes.getValue("cost")));
             }
         }
 

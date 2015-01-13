@@ -5,19 +5,22 @@
  */
 package pl.hojczak.meh.p2;
 
-import java.util.Date;
-import java.util.Properties;
-import java.util.Random;
-
 /**
  *
  * @author jhojczak
  */
-public class Helper {
+public class IndividualDoubleStart extends IndividiualDouble {
 
-    public int getIntegerProp(String name, Properties prop) {
-        return Integer.parseInt(prop.getProperty(name, "200"));
+    long value;
+
+    public IndividualDoubleStart(long value) {
+        super();
+        this.value = value;
     }
 
-  
+    @Override
+    public long getEvaluation() {
+        return value;
+    }
+
 }
