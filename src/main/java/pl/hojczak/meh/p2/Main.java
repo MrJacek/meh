@@ -8,6 +8,7 @@ package pl.hojczak.meh.p2;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,9 @@ public class Main {
             MAX_ITERATIONS = Integer.parseInt(prop.getProperty(PropertieName.Iteration.value));
             System.out.println("Availbe processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println(prop.toString());
+            System.out.println("Start: "+LocalTime.now());
+            
+            
             if ("true".equals(prop.getProperty("all", "false"))) {
                 executeTh(prepareProperties(prop, PropertieName.PopulationSize, 100));
                 executeTh(prepareProperties(prop, PropertieName.PopulationSize, 700));
@@ -73,7 +77,7 @@ public class Main {
                 executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 30));
 
                 es.shutdown();
-                es.awaitTermination(1, TimeUnit.HOURS);
+                es.awaitTermination(1, TimeUnit.DAYS);
                 saveMeans();
             } else {
                 Algorithm algorithm = new Algorithm(prop, problem, new Random(new Date().getTime()), false);
@@ -85,6 +89,7 @@ public class Main {
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.println("Stop :"+LocalTime.now());
     }
 
     private static void executeTh(Properties prop) {
