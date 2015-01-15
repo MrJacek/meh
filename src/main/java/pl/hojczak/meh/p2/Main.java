@@ -41,32 +41,36 @@ public class Main {
             if ("true".equals(prop.getProperty("all", "false"))) {
                 executeTh(prepareProperties(prop, PropertieName.PopulationSize, 100));
                 executeTh(prepareProperties(prop, PropertieName.PopulationSize, 700));
-//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1000));
-//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1300));
-//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1700));
-//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 2000));
-//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 3000));
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1000));
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1300));
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1700));
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 2000));
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 3000));
 
                 executeTh(prepareProperties(prop, PropertieName.MutateChance, 5));
                 executeTh(prepareProperties(prop, PropertieName.MutateChance, 10));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 15));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 25));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 30));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 35));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 40));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 45));
-//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 50));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 15));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 25));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 30));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 35));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 40));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 45));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 50));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 60));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 70));
 
                 executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 99));
                 executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 95));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 90));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 85));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 80));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 70));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 65));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 60));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 55));
-//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 50));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 90));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 85));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 80));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 70));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 65));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 60));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 55));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 50));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 40));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 30));
 
                 es.shutdown();
                 es.awaitTermination(1, TimeUnit.HOURS);
