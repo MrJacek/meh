@@ -6,6 +6,7 @@
 package pl.hojczak.meh.p2;
 
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,69 +25,126 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static ExecutorService es = Executors.newWorkStealingPool();
+    public static Problem problem;
+    public static List<ThreadForParametersSet> threads = new ArrayList<>();
+    public static int MAX_ITERATIONS;
+
+    public static void main(String[] args) throws InterruptedException {
         try {
             Properties prop = new Properties();
             prop.load(new FileInputStream(args[0]));
-            Problem problem = Problem.createProblemFromFile(prop.getProperty("problem.file", ""));
+            problem = Problem.createProblemFromFile(prop.getProperty(PropertieName.ProblemFile.value, ""));
+            MAX_ITERATIONS = Integer.parseInt(prop.getProperty(PropertieName.Iteration.value));
             System.out.println("Availbe processors: " + Runtime.getRuntime().availableProcessors());
-
+            System.out.println(prop.toString());
             if ("true".equals(prop.getProperty("all", "false"))) {
-                ExecutorService executorService = Executors.newWorkStealingPool();
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 100));
+                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 700));
+//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1000));
+//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1300));
+//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 1700));
+//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 2000));
+//                executeTh(prepareProperties(prop, PropertieName.PopulationSize, 3000));
 
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 5));
+                executeTh(prepareProperties(prop, PropertieName.MutateChance, 10));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 15));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 25));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 30));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 35));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 40));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 45));
+//                executeTh(prepareProperties(prop, PropertieName.MutateChance, 50));
+
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 99));
+                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 95));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 90));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 85));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 80));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 70));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 65));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 60));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 55));
+//                executeTh(prepareProperties(prop, PropertieName.IntercroosingChance, 50));
+
+                es.shutdown();
+                es.awaitTermination(1, TimeUnit.HOURS);
+                saveMeans();
             } else {
-                Algorithm algorithm = new Algorithm(prop, problem, new Random(new Date().getTime()));
+                Algorithm algorithm = new Algorithm(prop, problem, new Random(new Date().getTime()), false);
                 algorithm.compute();
                 algorithm.finish();
-                System.out.println("BEST  =  " + algorithm.getBest());
-                System.out.println("WORST =  " + algorithm.getWorst());
+                System.out.println("Best: " + algorithm.getBest());
+                System.out.println("Worst: " + algorithm.getWorst());
             }
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static class OneSetOfParametersThread implements Runnable {
+    private static void executeTh(Properties prop) {
+        ThreadForParametersSet th = new ThreadForParametersSet(problem, prop);
+        threads.add(th);
+        es.submit(th);
+    }
 
-        Properties prop;
-        Problem problem;
-        int[] meansOfMeans;
-        int[] meansOfBests;
-        int[] meansOfWorst;
-        List<Individual> best;
-        List<Individual> worst;
-        Helper h = new Helper();
+    private static Properties prepareProperties(Properties prop, PropertieName name, int value) {
+        Properties result = copyProperties(prop);
+        result.setProperty(name.value, "" + value);
+        String outputFile = name.name() + "-" + value;
+        result.setProperty(PropertieName.OutputFile.value, outputFile);
+        return result;
+    }
 
-        public OneSetOfParametersThread(Properties prop, Problem problem) {
-            this.prop = prop;
-            this.problem = problem;
-            meansOfBests = new int[h.getIntegerProp("max.iteration", prop)];
-
+    public static Properties copyProperties(Properties prop) {
+        Properties result = new Properties();
+        for (Object k : prop.keySet()) {
+            result.setProperty(k.toString(), prop.getProperty(k.toString()));
         }
+        return result;
+    }
 
-        @Override
-        public void run() {
-            String fileName = prop.getProperty("output.file");
-            for (int i = 0; i < ITERATION_PER_PARAMETERS; i++) {
-                prop.setProperty("output.file", fileName + "." + i);
-                try {
-                    Algorithm algorithm = new Algorithm(prop, problem, new Random(new Date().getTime()));
-                    algorithm.compute();
-                    algorithm.finish();
-                    for (int j = 0; j < meansOfBests.length; j++) {
-                        meansOfMeans[j] += algorithm.getMeans()[j];
-                    }
-                    best.add(algorithm.getBest());
-                    worst.add(algorithm.getWorst());
-                } catch (IOException ex) {
-                    throw new IllegalStateException(ex);
+    private static void saveMeans() throws IOException {
+        try (FileWriter w = new FileWriter("means.csv")) {
+            for (ThreadForParametersSet thread : threads) {
+                w.append(thread.fileName).append(";");
+            }
+            w.append("\n");
+            for (int i = 0; i < MAX_ITERATIONS; i++) {
+                for (ThreadForParametersSet thread : threads) {
+                    w.append(Long.toString(thread.meansOfMeans[i])).append(";");
                 }
+                w.append("\n");
             }
-            for (int i = 0; i < meansOfMeans.length; i++) {
-                meansOfMeans[i] = meansOfMeans[i] / ITERATION_PER_PARAMETERS;
-            }
+            w.flush();
         }
-        private static final int ITERATION_PER_PARAMETERS = 10;
-
+        try (FileWriter w = new FileWriter("summary.csv")) {
+            w.append("#;");
+            for (ThreadForParametersSet thread : threads) {
+                w.append(thread.fileName).append(";");
+            }
+            w.append("\n").append("meanTime");
+            for (ThreadForParametersSet thread : threads) {
+                w.append(";" + thread.meanTime);
+            }
+            w.append("\n").append("meansOfBests");
+            for (ThreadForParametersSet thread : threads) {
+                w.append(";" + thread.meansOfBests);
+            }
+            w.append("\n").append("meansOfWorst");
+            for (ThreadForParametersSet thread : threads) {
+                w.append(";" + thread.meansOfWorst);
+            }
+            w.append("\n").append("best");
+            for (ThreadForParametersSet thread : threads) {
+                w.append(";\"" + thread.best + "\"");
+            }
+            w.append("\n").append("worst");
+            for (ThreadForParametersSet thread : threads) {
+                w.append(";\"" + thread.worst + "\"");
+            }
+            w.flush();
+        }
     }
 }

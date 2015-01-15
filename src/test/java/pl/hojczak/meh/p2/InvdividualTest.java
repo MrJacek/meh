@@ -38,7 +38,6 @@ public class InvdividualTest {
     }
 
     @Test
-
     public void shouldCreateInvdividualWithGenotype() {
         int[] genotype = individual.getGenotype();
         Assert.assertNotNull(genotype);

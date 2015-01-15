@@ -5,9 +5,7 @@
  */
 package pl.hojczak.meh.p2;
 
-import java.util.Date;
 import java.util.Properties;
-import java.util.Random;
 
 /**
  *
@@ -19,5 +17,4 @@ public class Helper {
         return Integer.parseInt(prop.getProperty(name, "200"));
     }
 
-  
 }

@@ -30,13 +30,14 @@ public class Algorithm {
     final int chanceToIntercrossing;
     final int chanceToMutate;
     final Random random;
-    FileWriter writer;
+    StringBuilder writer;
     private int[] means;
+    private final boolean paraler;
 
     Individual best;
     Individual worst;
 
-    public Algorithm(Properties prop, Problem p, Random random) throws FileNotFoundException, IOException {
+    public Algorithm(Properties prop, Problem p, Random random, boolean paraler) throws FileNotFoundException, IOException {
         if (prop == null) {
             throw new IllegalArgumentException("prop can't be null");
         }
@@ -47,13 +48,14 @@ public class Algorithm {
             throw new IllegalArgumentException("p can't be null");
         }
         this.prop = prop;
-        startPopulationSize = helper.getIntegerProp("population.start.size", prop);
-        maxIteration = helper.getIntegerProp("max.iteration", prop);
-        chanceToIntercrossing = helper.getIntegerProp("chance.to.mutate", prop);
-        chanceToMutate = helper.getIntegerProp("chance.to.intercroosing", prop);
-        outputFile = prop.getProperty("output.file", "output.csv");
+        startPopulationSize = helper.getIntegerProp(PropertieName.PopulationSize.value, prop);
+        maxIteration = helper.getIntegerProp(PropertieName.Iteration.value, prop);
+        chanceToIntercrossing = helper.getIntegerProp(PropertieName.IntercroosingChance.value, prop);
+        chanceToMutate = helper.getIntegerProp(PropertieName.MutateChance.value, prop);
+        outputFile = prop.getProperty(PropertieName.OutputFile.value, "output") + ".csv";
+        this.paraler = paraler;
         problem = p;
-        writer = new FileWriter(outputFile, false);
+        writer = new StringBuilder();
         this.random = random;
         means = new int[maxIteration];
 
@@ -67,6 +69,7 @@ public class Algorithm {
         chanceToIntercrossing = 99;
         chanceToMutate = 10;
         random = new Random();
+        paraler = false;
     }
 
     public void compute() throws IOException {
@@ -76,28 +79,32 @@ public class Algorithm {
         Collections.sort(population);
         best = population.get(0);
         worst = population.get(population.size() - 1);
-        Individual localBest = best;
-        Individual localWorst = worst;
+        Individual localBest;
+        Individual localWorst;
         int index = 0;
-        System.out.println("Iteration:");
+        if (!paraler) {
+            System.out.println("Iteration:");
+        }
         writer.append("index;Current population size;Reproduction population size;Childe population size;mean value;best;worst\n");
         while (index != maxIteration) {
             means[index] = calculateMean(population);
-            System.out.print("\r" + index);
+            if (!paraler) {
+                System.out.print("\r" + index);
+            }
             List<Individual> T = reporoduction(population);
             List<Individual> O = intercroosing(T, chanceToIntercrossing);
             mutation(O, chanceToMutate);
             Collections.sort(O);
             Collections.sort(T);
 
-            writer.append(index + ";" + population.size() + ";" + T.size() + ";" + O.size() + ";" + means[index]);
+            writer.append(index).append(";").append(population.size()).append(";").append(T.size()).append(";").append(O.size()).append(";").append(means[index]);
 
             population = succession(O, T);
 
             Collections.sort(population);
             localBest = population.get(0);
             localWorst = population.get(population.size() - 1);
-            writer.append(";" + localBest.toCSV() + ";" + localWorst.toCSV() + "\n");
+            writer.append(";").append(localBest.toCSV()).append(";").append(localWorst.toCSV()).append("\n");
             if (localBest.getEvaluation() < best.getEvaluation()) {
                 best = localBest;
             }
@@ -107,7 +114,9 @@ public class Algorithm {
 
             index++;
         }
-        System.out.println("\nFinish!");
+        if (!paraler) {
+            System.out.println("\nFinish!");
+        }
     }
 
     public int[] getMeans() {
@@ -254,8 +263,10 @@ public class Algorithm {
     }
 
     void finish() throws IOException {
-        writer.flush();
-        writer.close();
+        try (FileWriter w = new FileWriter(outputFile, false)) {
+            w.append(writer.toString());
+            w.flush();
+        }
     }
 
     private int calculateMean(List<Individual> population) {

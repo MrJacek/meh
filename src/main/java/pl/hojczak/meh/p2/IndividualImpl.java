@@ -46,13 +46,13 @@ public class IndividualImpl implements Individual {
         }
         this.random = random;
         this.problem = problem;
-        this.genotype = genotype.clone();
+        this.genotype = genotype;
         this.removeDuplicationInGenotype();
         this.removeNotExistingConnectiong();
     }
 
     public int[] getGenotype() {
-        return genotype.clone();
+        return genotype;
     }
 
     public long getEvaluation() {

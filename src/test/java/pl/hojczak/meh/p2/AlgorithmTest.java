@@ -29,7 +29,7 @@ public class AlgorithmTest {
     public void initAlgorithmObject() throws FileNotFoundException, IOException {
         Properties prop = new Properties();
         p = Problem.createProblemFromFile(AlgorithmTest.class.getResource("att48.xml").getFile());
-        algorithm = new Algorithm(prop, p, random);
+        algorithm = new Algorithm(prop, p, random, false);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class AlgorithmTest {
     public void computeShouldCreateStartPopulationWithGivenSize() throws IOException {
         Properties prop = new Properties();
         prop.setProperty("population.start.size", "200");
-        algorithm = new Algorithm(prop, p, random);
+        algorithm = new Algorithm(prop, p, random, false);
         algorithm.createStartPopulation();
         List<Individual> population = algorithm.getCurrentPopulation();
         Assert.assertNotNull(population);
@@ -69,7 +69,7 @@ public class AlgorithmTest {
         long[][] graph = new long[][]{{0l, 3l, 4l, 3l, 1l}, {3l, 0l, 1l, 4l, 3l}, {5l, 1l, 0l, 9l, 1l}, {1l, 2l, 3l, 0l, 2l}, {1l, 2l, 3l, 1l, 0l}};
         Problem p = new Problem(graph);
         Properties prop = new Properties();
-        algorithm = new Algorithm(prop, p, random);
+        algorithm = new Algorithm(prop, p, random,false);
         int[] genotypeA = new int[]{0, 1, 3, 2, 4};
         int[] genotypeB = new int[]{3, 1, 2, 4, 0};
         int[] offspringGenotype = new int[]{3, 1, 2, 0, 4};
@@ -94,7 +94,7 @@ public class AlgorithmTest {
         p = Problem.createProblemFromFile(AlgorithmTest.class.getResource("att48.xml").getFile());
         prop.setProperty("population.start.size", "10");
         prop.setProperty("max.iteration", "10");
-        algorithm = new Algorithm(prop, p, random);
+        algorithm = new Algorithm(prop, p, random,false);
         algorithm.compute();
     }
 

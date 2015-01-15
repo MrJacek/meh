@@ -31,6 +31,7 @@ public class IndividiualDouble implements Individual {
     public IndividiualDouble(IndividualImpl one, IndividualImpl two) {
         this.one = one;
         this.two = two;
+        this.removeCollidations();
     }
 
     IndividiualDouble(Problem problem, Random random) {
@@ -73,12 +74,12 @@ public class IndividiualDouble implements Individual {
         return 0;
     }
 
-    private void removeCollidations() {
-        int[] a = one.getGenotype();
-        int[] b = two.getGenotype();
+    public void removeCollidations(int[] one, int[] two) {
+        int[] a = one;
+        int[] b = two;
         b[0] = a[0];
         a[a.length - 1] = b[a.length - 1];
-        for (int i = 1; i < a.length; i++) {
+        for (int i = 1; i < a.length-1; i++) {
             if (a[i] == b[i]) {
                 if (i >= a.length - 2) {
                     if (i % 2 == 0) {
@@ -101,6 +102,10 @@ public class IndividiualDouble implements Individual {
                 }
             }
         }
+    }
+
+    private void removeCollidations() {
+        removeCollidations(one.getGenotype(), two.getGenotype());
     }
 
     @Override
