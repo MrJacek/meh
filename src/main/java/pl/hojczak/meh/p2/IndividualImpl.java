@@ -5,6 +5,7 @@
  */
 package pl.hojczak.meh.p2;
 
+import pl.hojczak.meh.utils.Individual;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +17,10 @@ import java.util.Random;
  */
 public class IndividualImpl implements Individual {
 
-    int[] genotype;
+    protected int[] genotype;
     // arrayUsedToDetectingGenDuplicationInGenotype
 
-    long evaluation = 0;
+    protected long evaluation = 0;
     Problem problem;
     Random random;
 
@@ -55,6 +56,7 @@ public class IndividualImpl implements Individual {
         return genotype;
     }
 
+    @Override
     public long getEvaluation() {
 
         if (evaluation != 0) {

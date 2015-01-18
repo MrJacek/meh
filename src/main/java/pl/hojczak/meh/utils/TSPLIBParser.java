@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.hojczak.meh.p2;
+package pl.hojczak.meh.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class TSPLIBParser {
     private static final Logger LOG = Logger.getLogger(TSPLIBParser.class.getName());
     SAXParser parser;
 
-    long[][] loadGraphFromFile(String file) throws ParserConfigurationException, SAXNotRecognizedException, SAXNotSupportedException, SAXException, IOException {
+    public long[][] loadGraphFromFile(String file) throws ParserConfigurationException, SAXNotRecognizedException, SAXNotSupportedException, SAXException, IOException {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         parser = parserFactory.newSAXParser();

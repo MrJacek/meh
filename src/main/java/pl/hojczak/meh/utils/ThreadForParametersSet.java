@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.hojczak.meh.p2;
+package pl.hojczak.meh.utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +16,9 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.hojczak.meh.p2.Algorithm;
+import pl.hojczak.meh.p2.Main;
+import pl.hojczak.meh.p2.Problem;
 
 /**
  *
@@ -26,14 +29,14 @@ public class ThreadForParametersSet implements Runnable {
     final int ITERATION_PER_PARAMETERS;
     Properties prop;
     Problem problem;
-    long[] meansOfMeans;
-    long meansOfBests = 0;
-    long meansOfWorst = 0;
-    List<Individual> best;
-    List<Individual> worst;
-    long meanTime;
+    public long[] meansOfMeans;
+    public long meansOfBests = 0;
+    public long meansOfWorst = 0;
+    public List<Individual> best;
+    public List<Individual> worst;
+    public long meanTime;
     Helper h = new Helper();
-    String fileName;
+    public String fileName;
 
     public ThreadForParametersSet(Problem problem, Properties prop) {
         this.prop = prop;

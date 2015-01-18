@@ -5,6 +5,10 @@
  */
 package pl.hojczak.meh.p2;
 
+import pl.hojczak.meh.utils.IndividualDoubleStart;
+import pl.hojczak.meh.utils.Helper;
+import pl.hojczak.meh.utils.Individual;
+import pl.hojczak.meh.utils.PropertieName;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -82,11 +86,12 @@ public class Algorithm {
         Individual localBest;
         Individual localWorst;
         int index = 0;
+        int populationInIteration = startPopulationSize;
         if (!paraler) {
             System.out.println("Iteration:");
         }
         writer.append("index;Current population size;Reproduction population size;Childe population size;mean value;best;worst\n");
-        while (index != maxIteration) {
+        while (index != maxIteration ) {
             means[index] = calculateMean(population);
             if (!paraler) {
                 System.out.print("\r" + index);
@@ -111,7 +116,6 @@ public class Algorithm {
             if (localWorst.getEvaluation() > worst.getEvaluation()) {
                 worst = localWorst;
             }
-
             index++;
         }
         if (!paraler) {
@@ -195,7 +199,7 @@ public class Algorithm {
         int tmpSize = tmp.size() - 1;
         List<Individual> result = new ArrayList<>();
 
-        while (!tmp.isEmpty()) {
+        while (tmp.size() >= 2) {
             if (random.nextInt(100) < chanceToIntercrossing) {
 
                 int a = random.nextInt(tmpSize);
@@ -262,7 +266,7 @@ public class Algorithm {
         return result;
     }
 
-    void finish() throws IOException {
+    public void finish() throws IOException {
         try (FileWriter w = new FileWriter(outputFile, false)) {
             w.append(writer.toString());
             w.flush();

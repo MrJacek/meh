@@ -5,6 +5,7 @@
  */
 package pl.hojczak.meh.p2;
 
+import pl.hojczak.meh.utils.Individual;
 import java.util.Random;
 
 /**

@@ -5,6 +5,7 @@
  */
 package pl.hojczak.meh.p2;
 
+import pl.hojczak.meh.utils.Individual;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;

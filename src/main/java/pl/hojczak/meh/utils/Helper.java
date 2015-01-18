@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.hojczak.meh.p2;
+package pl.hojczak.meh.utils;
+
+import java.util.Properties;
 
 /**
  *
  * @author jhojczak
  */
-public interface Individual extends Comparable<Individual> {
+public class Helper {
 
-    long getEvaluation();
-
-    void mutate();
-
-    String toCSV();
+    public int getIntegerProp(String name, Properties prop) {
+        return Integer.parseInt(prop.getProperty(name, "200"));
+    }
 
 }

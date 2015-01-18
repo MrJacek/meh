@@ -5,6 +5,7 @@
  */
 package pl.hojczak.meh.p2;
 
+import pl.hojczak.meh.utils.TSPLIBParser;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

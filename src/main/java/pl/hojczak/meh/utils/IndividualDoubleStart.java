@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.hojczak.meh.p2;
+package pl.hojczak.meh.utils;
+
+import pl.hojczak.meh.p2.IndividiualDouble;
 
 /**
  *
